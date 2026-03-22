@@ -11,11 +11,11 @@ Features:
     - Real-time training progress (auto-refreshing)
     - Comparison metrics (RL vs Fixed-Time)
     - Model checkpoint explorer
+    - Priority vehicle (ambulance) handling stats
     - TensorBoard integration
 """
 import os
 import glob
-import time
 from typing import Optional, Tuple
 
 import numpy as np
@@ -96,8 +96,7 @@ with col2:
 
 if auto_refresh:
     st.sidebar.info(f"Auto-refreshing every {refresh_interval}s")
-    time.sleep(refresh_interval)
-    st.rerun()
+    st.autorefresh(interval=refresh_interval * 1000, key="dashboard_refresh")
 
 
 # ── Helper Functions ───────────────────────────────────────────────────────
@@ -174,9 +173,10 @@ def show_training_progress():
         )
 
     with col3:
+        episode_count = len(glob.glob(os.path.join(os.path.join(OUTPUTS_DIR, "training"), "*.csv")))
         st.metric(
             "Episodes",
-            f"{training_data['step'].max() / 720:.0f}" if len(training_data) > 0 else "0",
+            f"{episode_count}",
         )
 
     with col4:
@@ -292,22 +292,30 @@ def show_comparison_metrics():
     # Bar chart comparison
     fig = go.Figure()
 
-    for _, row in comparison_data.iterrows():
-        fig.add_trace(go.Bar(
-            name="RL (DQN)",
-            x=[row["metric"]],
-            y=[row["rl_mean"]],
-            error_y=dict(type='data', array=[row["rl_std"]]),
-            marker_color="steelblue",
-        ))
+    metrics_labels = {
+        "avg_waiting_time": "Avg Waiting Time (s)",
+        "avg_speed": "Avg Speed (m/s)",
+        "total_stopped": "Total Stopped",
+        "total_waiting_time": "Total Waiting Time (s)",
+    }
 
-        fig.add_trace(go.Bar(
-            name="Fixed-Time",
-            x=[row["metric"]],
-            y=[row["fixed_mean"]],
-            error_y=dict(type='data', array=[row["fixed_std"]]),
-            marker_color="coral",
-        ))
+    # RL bars (one trace)
+    fig.add_trace(go.Bar(
+        name="RL (DQN)",
+        x=[metrics_labels.get(row["metric"], row["metric"]) for _, row in comparison_data.iterrows()],
+        y=[row["rl_mean"] for _, row in comparison_data.iterrows()],
+        error_y=dict(type='data', array=[row["rl_std"] for _, row in comparison_data.iterrows()]),
+        marker_color="steelblue",
+    ))
+
+    # Fixed-time bars (one trace)
+    fig.add_trace(go.Bar(
+        name="Fixed-Time",
+        x=[metrics_labels.get(row["metric"], row["metric"]) for _, row in comparison_data.iterrows()],
+        y=[row["fixed_mean"] for _, row in comparison_data.iterrows()],
+        error_y=dict(type='data', array=[row["fixed_std"] for _, row in comparison_data.iterrows()]),
+        marker_color="coral",
+    ))
 
     fig.update_layout(
         title="Metric Comparison: RL vs Fixed-Time",
@@ -504,13 +512,13 @@ def show_tensorboard():
     - `rollout/ep_rew_mean` - Average episode reward
     - `train/learning_rate` - Learning rate schedule
     - `train/loss` - DQN loss function value
+    - `rollout/es_bar` - Exploration epsilon value
 
     **To explore metrics live:**
     1. Start TensorBoard: `tensorboard --logdir=outputs/tb_logs/`
     2. Open http://localhost:6006 in your browser
     3. Select the "Scalars" tab to view metrics over time
-    4. Use the "Distributions" tab to see network weights
-    5. Check "Histograms" for gradient analysis
+    4. Use the "Histograms" tab to see weight distributions
     """)
 
 

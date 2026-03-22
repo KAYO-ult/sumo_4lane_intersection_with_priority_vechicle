@@ -642,5 +642,5 @@ elif tab == "⚙️ Help & Settings":
 st.markdown("---")
 st.markdown(
     "🚦 SUMO 4-Way Intersection RL Dashboard | "
-    "[GitHub](https://github.com) | [SUMO](http://sumo.dlr.de)"
+    "[GitHub](https://github.com/KAYO-ult/sumo_4lane_intersection_with_priority_vechicle) | [SUMO](http://sumo.dlr.de)"
 )

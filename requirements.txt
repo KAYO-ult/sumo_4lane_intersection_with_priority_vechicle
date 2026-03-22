@@ -1,0 +1,26 @@
+# SUMO-RL: Gymnasium wrapper for SUMO traffic signal control
+sumo-rl>=1.4.5
+
+# Reinforcement Learning (DQN)
+stable-baselines3>=2.1.0
+
+# Gymnasium (RL environment interface)
+gymnasium>=0.28.0
+
+# Data processing and visualization
+numpy>=1.24.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+pillow>=10.0.0
+
+# TensorBoard for training monitoring
+tensorboard>=2.14.0
+
+# Interactive visualization and dashboards
+streamlit>=1.28.0
+plotly>=5.17.0
+altair>=5.0.0
+
+# DOCX generation (for export_explanation.py)
+python-docx>=0.8.11
+#python -m pip install python-docx

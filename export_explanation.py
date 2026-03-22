@@ -241,10 +241,10 @@ def main():
         doc,
         ["Metric", "AI Agent", "Fixed-Time Signal", "AI is Better By"],
         [
-            ["Average waiting time per car", "1.33 sec", "4.00 sec", "66.6%"],
-            ["Average car speed", "8.43 m/s", "7.96 m/s", "5.8%"],
-            ["Cars stuck at red", "7.32", "10.31", "29.0%"],
-            ["Total waiting time", "56.86 sec", "155.23 sec", "63.4%"],
+            ["Average waiting time per car", "0.57 sec", "3.91 sec", "85.4%"],
+            ["Average car speed", "9.87 m/s", "8.29 m/s", "19.0%"],
+            ["Cars stuck at red", "3.31", "9.45", "65.0%"],
+            ["Total waiting time", "19.0 sec", "141.4 sec", "86.6%"],
         ],
     )
 
@@ -491,7 +491,7 @@ def main():
         "We built a virtual Indian crossroad with 3 lanes, trained an AI to play "
         "traffic police officer 100,000 times until it learned the best strategy, "
         "added ambulance priority handling for emergency vehicles, and proved it "
-        "reduces car waiting time by 66% compared to normal fixed-time signals."
+        "reduces car waiting time by 85% compared to normal fixed-time signals."
     )
     run.bold = True
     run.italic = True

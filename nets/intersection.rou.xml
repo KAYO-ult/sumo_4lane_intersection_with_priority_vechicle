@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-22 18:18:47.799030 by Eclipse SUMO randomTrips.py v1_26_0+0000-fa7df22d7f1
+<!-- generated on 2026-03-27 00:20:12.077641 by Eclipse SUMO randomTrips.py v1_26_0+0000-fa7df22d7f1
 <configuration>
-    <net-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
-    <route-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.rou.xml"/>
+    <net-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
+    <route-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.rou.xml"/>
     <trip-attributes value="departLane=&quot;best&quot; departSpeed=&quot;max&quot; departPos=&quot;random&quot;"/>
     <vehicle-class value="passenger"/>
     <period value="1.5"/>
 </configuration>
 -->
 
-<!-- generated on 2026-03-22T18:18:47.656707+05:30 by Eclipse SUMO duarouter 1.26.0
+<!-- generated on 2026-03-27T00:20:11.932353+05:30 by Eclipse SUMO duarouter 1.26.0
 <duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
 
     <input>
-        <net-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
+        <net-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
         <route-files value="trips.trips.xml"/>
     </input>
 
     <output>
-        <output-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.rou.xml"/>
+        <output-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.rou.xml"/>
         <alternatives-output value="NUL"/>
     </output>
 

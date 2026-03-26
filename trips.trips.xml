@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-22 18:18:48.581646 by Eclipse SUMO randomTrips.py v1_26_0+0000-fa7df22d7f1
+<!-- generated on 2026-03-27 00:20:15.973383 by Eclipse SUMO randomTrips.py v1_26_0+0000-fa7df22d7f1
 <configuration>
-    <net-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
-    <route-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection_ambulance.rou.xml"/>
+    <net-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
+    <route-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection_ambulance.rou.xml"/>
     <trip-attributes value="departLane=&quot;best&quot; departSpeed=&quot;max&quot; departPos=&quot;random&quot;"/>
     <vehicle-class value="emergency"/>
     <seed value="43"/>

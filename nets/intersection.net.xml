@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-22T18:18:46.465190+05:30 by Eclipse SUMO netconvert 1.26.0
+<!-- generated on 2026-03-27T00:20:10.671212+05:30 by Eclipse SUMO netconvert 1.26.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
-        <node-files value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.nod.xml"/>
-        <edge-files value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.edg.xml"/>
+        <node-files value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.nod.xml"/>
+        <edge-files value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.edg.xml"/>
     </input>
 
     <output>
-        <output-file value="D:\Education\College Project\Major\bcak-up\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
+        <output-file value="D:\Education\College Project\Major\sumo_4lane_intersection_with_priority_vechicle\nets\intersection.net.xml"/>
     </output>
 
     <processing>

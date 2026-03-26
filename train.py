@@ -69,6 +69,7 @@ def train(args: argparse.Namespace) -> None:
         gamma=GAMMA,
         policy_kwargs={"net_arch": NET_ARCH},
         verbose=1,
+        device="cuda",
         tensorboard_log=os.path.join(OUTPUTS_DIR, "tb_logs"),
     )
 

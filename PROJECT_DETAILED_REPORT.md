@@ -97,10 +97,10 @@ The control loop follows:
 Key environment parameters:
 1. Intersection type: single 4-way, 3 lanes per direction.
 2. Left-hand traffic: enabled.
-3. Episode duration: 3600 s.
-4. Decision interval: 5 s.
-5. Yellow time: 3 s.
-6. Green time constraints: 5 s to 60 s.
+3. Episode duration: 3600s.
+4. Decision interval: 5s.
+5. Yellow time: 3s.    
+6. Green time constraints: 5s to 60s.
 
 ### 4.1.3 DQN Training Setup
 Model uses MLP policy with architecture [256, 256], learning rate 1e-3, replay buffer 50,000, batch size 128, gamma 0.99, and 100,000 training timesteps by default.

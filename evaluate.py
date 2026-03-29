@@ -13,6 +13,7 @@ Usage
 import os
 import sys
 import argparse
+import re
 
 import numpy as np
 import pandas as pd
@@ -22,8 +23,111 @@ from stable_baselines3 import DQN
 from config import (
     NET_FILE, ROUTE_FILE, MODELS_DIR, OUTPUTS_DIR,
     NUM_SECONDS, DELTA_TIME, YELLOW_TIME, MIN_GREEN, MAX_GREEN,
-    REWARD_FN, EVAL_EPISODES,
+    REWARD_FN, EVAL_EPISODES, AMBULANCE_SPEED,
 )
+
+
+AMBULANCE_ROUTE_FILE = os.path.join(
+    os.path.dirname(ROUTE_FILE),
+    "intersection_ambulance.rou.xml",
+)
+
+
+def _build_route_file_arg() -> str:
+    """Use normal + ambulance routes when ambulance file is available."""
+    if os.path.isfile(AMBULANCE_ROUTE_FILE):
+        return f"{ROUTE_FILE},{AMBULANCE_ROUTE_FILE}"
+    return ROUTE_FILE
+
+
+def _sanitize_ambulance_route_file() -> None:
+    """Make ambulance route XML SUMO-valid and enforce red emergency vehicles."""
+    if not os.path.isfile(AMBULANCE_ROUTE_FILE):
+        return
+
+    with open(AMBULANCE_ROUTE_FILE, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    updated_content = content
+
+    # Ensure emergency type has explicit max speed + red color.
+    emergency_vtype = (
+        f'<vType id="emergency" vClass="emergency" '
+        f'maxSpeed="{AMBULANCE_SPEED:.2f}" color="255,0,0"/>'
+    )
+    if re.search(r'<vType\s+id="emergency"[^>]*?/?>', updated_content):
+        updated_content = re.sub(
+            r'<vType\s+id="emergency"[^>]*?/?>',
+            emergency_vtype,
+            updated_content,
+            count=1,
+        )
+    else:
+        updated_content = re.sub(
+            r'(<routes[^>]*>)',
+            r'\1\n    ' + emergency_vtype,
+            updated_content,
+            count=1,
+        )
+
+    # SUMO route schema does not allow maxSpeed directly on vehicle elements.
+    updated_content = re.sub(
+        r'(<vehicle\b[^>]*?)\smaxSpeed="[^"]*"',
+        r'\1',
+        updated_content,
+    )
+
+    if updated_content != content:
+        with open(AMBULANCE_ROUTE_FILE, "w", encoding="utf-8") as f:
+            f.write(updated_content)
+
+
+def _ensure_unique_ambulance_vehicle_ids(prefix: str = "amb_") -> None:
+    """Ensure ambulance vehicle IDs do not collide with normal route IDs."""
+    if not os.path.isfile(AMBULANCE_ROUTE_FILE):
+        return
+
+    with open(AMBULANCE_ROUTE_FILE, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Prefix every <vehicle id="..."> in ambulance routes to avoid duplicate IDs
+    # when loading multiple route files in the same SUMO simulation.
+    updated_content = re.sub(
+        r'(<vehicle\s+id=")([^\"]+)(")',
+        lambda m: f'{m.group(1)}{m.group(2) if m.group(2).startswith(prefix) else prefix + m.group(2)}{m.group(3)}',
+        content,
+    )
+
+    if updated_content != content:
+        with open(AMBULANCE_ROUTE_FILE, "w", encoding="utf-8") as f:
+            f.write(updated_content)
+        print(f"Updated ambulance vehicle IDs with prefix '{prefix}' to avoid duplicates.")
+
+
+def _apply_ambulance_priority(env) -> None:
+    """Allow emergency vehicles to pass without red-light waiting."""
+    if not hasattr(env, "sumo") or env.sumo is None:
+        return
+
+    try:
+        vehicle_ids = env.sumo.vehicle.getIDList()
+    except Exception:
+        return
+
+    for veh_id in vehicle_ids:
+        try:
+            if env.sumo.vehicle.getTypeID(veh_id) != "emergency":
+                continue
+
+            # Keep emergency vehicles visually distinct.
+            env.sumo.vehicle.setColor(veh_id, (255, 0, 0, 255))
+
+            # 7 disables right-of-way and red-light checks while preserving
+            # core safety checks, preventing red-signal waiting for emergency vehicles.
+            env.sumo.vehicle.setSpeedMode(veh_id, 7)
+        except Exception:
+            # Ignore per-vehicle TraCI issues so evaluation continues.
+            continue
 
 
 # ── Metric Collection ─────────────────────────────────────────────────
@@ -68,11 +172,12 @@ def run_rl_evaluation(
 ) -> pd.DataFrame:
     """Run evaluation episodes with the trained RL model."""
     results = []
+    route_file_arg = _build_route_file_arg()
 
     for ep in range(num_episodes):
         env = sumo_rl.SumoEnvironment(
             net_file=NET_FILE,
-            route_file=ROUTE_FILE,
+            route_file=route_file_arg,
             use_gui=use_gui,
             num_seconds=NUM_SECONDS,
             delta_time=DELTA_TIME,
@@ -86,6 +191,7 @@ def run_rl_evaluation(
         model = DQN.load(model_path, env=env)
 
         obs, info = env.reset()
+        _apply_ambulance_priority(env)
         done = False
         total_reward = 0.0
         step_records: list[dict] = []
@@ -93,6 +199,7 @@ def run_rl_evaluation(
         while not done:
             action, _ = model.predict(obs, deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action)
+            _apply_ambulance_priority(env)
             total_reward += reward
             _collect_metrics(info, step_records)
             done = terminated or truncated
@@ -120,11 +227,12 @@ def run_fixed_time_baseline(
 ) -> pd.DataFrame:
     """Run episodes with SUMO's default fixed-time signal plans."""
     results = []
+    route_file_arg = _build_route_file_arg()
 
     for ep in range(num_episodes):
         env = sumo_rl.SumoEnvironment(
             net_file=NET_FILE,
-            route_file=ROUTE_FILE,
+            route_file=route_file_arg,
             use_gui=use_gui,
             num_seconds=NUM_SECONDS,
             delta_time=DELTA_TIME,
@@ -136,11 +244,13 @@ def run_fixed_time_baseline(
         )
 
         obs, info = env.reset()
+        _apply_ambulance_priority(env)
         done = False
         step_records: list[dict] = []
 
         while not done:
             obs, reward, terminated, truncated, info = env.step(0)
+            _apply_ambulance_priority(env)
             _collect_metrics(info, step_records)
             done = terminated or truncated
         env.close()
@@ -258,6 +368,10 @@ def main() -> None:
     print("=" * 60)
     print("Evaluation — 4-Way Intersection")
     print("=" * 60)
+
+    # Ensure ambulance route XML is SUMO-valid and renders in red in GUI.
+    _ensure_unique_ambulance_vehicle_ids()
+    _sanitize_ambulance_route_file()
 
     # RL evaluation
     print(f"\n[1/2] Running RL evaluation ({args.episodes} episodes)...")

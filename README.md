@@ -226,10 +226,10 @@ After evaluation, the comparison between RL (DQN) and Fixed-Time signals shows s
 
 | Metric | RL (DQN) | Fixed-Time | Improvement |
 |---|---|---|---|
-| Avg Waiting Time (s) | 0.57 | 3.91 | **↓ 85.4%** |
-| Avg Speed (m/s) | 9.87 | 8.29 | **↑ 19.0%** |
-| Total Stopped Vehicles | 3.31 | 9.45 | **↓ 65.0%** |
-| Total Waiting Time (s) | 19.0 | 141.4 | **↓ 86.6%** |
+| Avg Waiting Time (s) | 0.9037 | 3.8970 | **↓ 76.81%** |
+| Avg Speed (m/s) | 9.5405 | 8.2775 | **↑ 15.26%** |
+| Total Stopped Vehicles | 4.4872 | 9.9175 | **↓ 54.75%** |
+| Total Waiting Time (s) | 32.5033 | 148.4064 | **↓ 78.10%** |
 
 The RL agent achieves **85% reduction in average waiting time** compared to fixed-time signals, while increasing vehicle speeds by ~19%. The dramatic improvement in total stopped vehicles (3.31 vs 9.45) demonstrates how effectively the learned policy adapts to traffic conditions in real-time.
 

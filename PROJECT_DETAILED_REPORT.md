@@ -180,4 +180,3 @@ The project successfully demonstrates that DQN-based adaptive signal control sig
 3. Stable-Baselines3 Documentation. https://stable-baselines3.readthedocs.io/
 4. Gymnasium Documentation. https://gymnasium.farama.org/
 5. Mnih, V., et al. "Human-level control through deep reinforcement learning." Nature, 2015.
-6
